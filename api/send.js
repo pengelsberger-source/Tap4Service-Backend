@@ -4,7 +4,11 @@ export default async function handler(req, res) {
 
   const { table, type } = req.query || {};
 
-  const message = `Service Anfrage\nTisch: ${table}\nAktion: ${type}\nZeit: ${new Date().toLocaleTimeString()}`;
+  const time = new Date().toLocaleTimeString("de-DE", {
+    timeZone: "Europe/Berlin",
+  });
+
+  const message = `Service Anfrage\nTisch: ${table}\nAktion: ${type}\nZeit: ${time}`;
 
   try {
     const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -19,13 +23,11 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!data.ok) {
-      console.error("Telegram Fehler:", data);
       return res.status(500).json({ error: data });
     }
 
     res.status(200).json({ status: "OK", telegram: data });
   } catch (err) {
-    console.error("Fetch Fehler:", err);
     res.status(500).json({ error: err.message });
   }
 }
