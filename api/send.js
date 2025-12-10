@@ -1,9 +1,10 @@
 export default async function handler(req, res) {
-  // CORS aktivieren
+  // --- CORS erlauben ---
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
+  // OPTIONS (Preflight) abfangen
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -22,14 +23,13 @@ export default async function handler(req, res) {
     berlinTimeLocale = now.toLocaleTimeString("de-DE", { timeZone: "Europe/Berlin" });
     berlinTimeLocaleString = now.toLocaleString("de-DE", { timeZone: "Europe/Berlin" });
   } catch (e) {
-    berlinTimeLocale = "toLocaleTimeString error: " + e.message;
-    berlinTimeLocaleString = "toLocaleString error: " + e.message;
+    berlinTimeLocale = "Time error: " + e.message;
+    berlinTimeLocaleString = "Time error: " + e.message;
   }
 
   const message = 
     `Service Anfrage\nTisch: ${table}\nAktion: ${type}\n` +
-    `Zeit (UTC): ${utcTime}\nZeit (Berlin toLocaleTimeString): ${berlinTimeLocale}\n` +
-    `Zeit (Berlin toLocaleString): ${berlinTimeLocaleString}`;
+    `Zeit: ${berlinTimeLocaleString}`;
 
   try {
     const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
